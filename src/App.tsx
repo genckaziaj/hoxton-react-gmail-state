@@ -3,10 +3,30 @@ import Header from "./components/Header";
 import initialEmails from "./data/emails";
 
 import "./App.css";
+import { useState } from "react";
 
 function App() {
   // Use initialEmails for state
   console.log(initialEmails);
+  const [emails, setEmmails] = useState(initialEmails);
+
+  const emailsCopy = JSON.parse(JSON.stringify(emails));
+
+  function toggleRead(emailRead: any) {
+    const updatedEmail = emailsCopy.find(
+      (email: any) => email.id === emailRead.id
+    );
+    updatedEmail.read = !updatedEmail.read;
+    setEmmails(emailsCopy);
+  }
+
+  function toggleStar(emailStar: any) {
+    const updatedEmail = emailsCopy.find(
+      (email: any) => email.id === emailStar.id
+    );
+    updatedEmail.starred = !updatedEmail.starred;
+    setEmmails(emailsCopy);
+  }
 
   return (
     <div className="app">
@@ -39,7 +59,43 @@ function App() {
           </li>
         </ul>
       </nav>
-      <main className="emails">{/* Render a list of emails here */}</main>
+      <main className="emails">
+        <ul>
+          {emails.map((email) => (
+            <li className={email.read ? "email read" : "email unread"}>
+              <input
+                id="hide-read"
+                type="checkbox"
+                onChange={() => {
+                  toggleRead(email);
+                }}
+                checked={email.read}
+              />
+              <input
+                type="checkbox"
+                checked={email.starred}
+                className="star-checkbox"
+                onChange={() => {
+                  toggleStar(email);
+                }}
+              />
+              <div className="title">{email.sender}</div>
+              <div className="title">{email.title}</div>
+            </li>
+          ))}
+          {/* <li className="email">
+            <input
+              id="hide-read"
+              type="checkbox"
+
+              // onChange={() => {}}
+            />
+            <input type="checkbox" className="star-checkbox" />
+            <h2 className="title">{emails[0].sender}</h2>
+            <h2 className="title">{emails[0].title}</h2>
+          </li> */}
+        </ul>
+      </main>
     </div>
   );
 }
